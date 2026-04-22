@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Gratuito do Seu Salão — AgendaControl</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1a12;
+  --bg2: #141f17;
+  --bg3: #1a2a1e;
+  --green: #22C55E;
+  --green-glow: rgba(34,197,94,0.14);
+  --green-border: rgba(34,197,94,0.22);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.10);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.10);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59,130,246,0.10);
+  --text: #e8f5e9;
+  --muted: #6b7c6e;
+  --border: rgba(34,197,94,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:44px 18px 64px;position:relative;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;top:-180px;left:50%;transform:translateX(-50%);
+  width:680px;height:460px;
+  background:radial-gradient(ellipse,rgba(34,197,94,0.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+.wrapper{width:100%;max-width:580px;position:relative;z-index:1;}
+
+/* Logo */
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:44px;justify-content:center;}
+.logo img{height:44px;width:auto;}
+.logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;letter-spacing:-.3px;}
+.logo-name span{color:var(--green);}
+
+/* Header */
+.header{text-align:center;margin-bottom:36px;}
+.badge{
+  display:inline-block;background:var(--green-glow);border:1px solid var(--green-border);
+  color:var(--green);font-size:11px;font-weight:500;letter-spacing:1.4px;
+  text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:18px;
+}
+h1{
+  font-family:'Syne',sans-serif;font-size:clamp(22px,5vw,34px);font-weight:800;
+  line-height:1.15;letter-spacing:-1px;margin-bottom:12px;
+}
+h1 .hl{color:var(--green);}
+.subtitle{color:var(--muted);font-size:15px;line-height:1.65;}
+
+/* Progress */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:30px;margin-bottom:18px;}
+.progress-bar{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:10px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s ease;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:24px;}
+
+/* Step dots */
+.steps{display:flex;gap:6px;margin-bottom:26px;justify-content:center;}
+.step-dot{width:26px;height:4px;border-radius:2px;background:var(--bg3);transition:background .3s;}
+.step-dot.active{background:var(--green);}
+
+/* Block title */
+.block-title{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  color:var(--muted);letter-spacing:.5px;text-transform:uppercase;
+  margin-bottom:22px;
+}
+.block-icon{
+  width:28px;height:28px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+
+/* Fields */
+.field{margin-bottom:20px;}
+label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:8px;}
+label strong{color:var(--text);font-weight:500;}
+.input-wrap{position:relative;display:flex;align-items:center;}
+.input-prefix{position:absolute;left:14px;color:var(--green);font-weight:500;font-size:14px;pointer-events:none;}
+input[type="number"]{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:16px;padding:13px 14px 13px 36px;outline:none;
+  transition:border-color .2s,box-shadow .2s;appearance:none;
+}
+input[type="number"]:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.1);}
+input[type="number"]::placeholder{color:#3a4a3d;}
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;}
+
+/* Range */
+.range-container{position:relative;padding-top:28px;}
+.range-value{position:absolute;right:0;top:0;font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--green);}
+input[type="range"]{
+  -webkit-appearance:none;width:100%;height:6px;border-radius:3px;
+  background:linear-gradient(to right,var(--green) 0%,var(--green) var(--pct,20%),var(--bg3) var(--pct,20%),var(--bg3) 100%);
+  outline:none;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--green);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--green);
+  cursor:pointer;transition:transform .1s;
+}
+input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.15);}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;}
+
+/* Days */
+.days-grid{display:flex;gap:7px;flex-wrap:wrap;}
+.day-btn{
+  flex:1;min-width:34px;padding:10px 4px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;text-align:center;transition:all .15s;user-select:none;
+}
+.day-btn:hover{border-color:var(--green);color:var(--text);}
+.day-btn.selected{background:var(--green-glow);border-color:var(--green);color:var(--green);}
+
+/* Option buttons */
+.options-grid{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{
+  width:100%;padding:13px 16px;border-radius:12px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;
+  cursor:pointer;text-align:left;transition:all .15s;
+  display:flex;align-items:center;gap:10px;
+}
+.opt-btn:hover{border-color:var(--green);background:var(--green-glow);}
+.opt-btn.selected{border-color:var(--green);background:var(--green-glow);color:var(--green);}
+.opt-check{
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:10px;transition:all .15s;
+}
+.opt-btn.selected .opt-check{background:var(--green);border-color:var(--green);color:#0f1a12;}
+
+/* Buttons */
+.btn-primary{
+  width:100%;padding:15px;border-radius:14px;border:none;
+  background:var(--green);color:#0f1a12;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:16px;
+  cursor:pointer;letter-spacing:-.2px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .2s,transform .1s,box-shadow .2s;
+}
+.btn-primary:hover{background:#16a34a;box-shadow:0 8px 24px rgba(34,197,94,.25);transform:translateY(-1px);}
+.btn-secondary{
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  padding:10px;border-radius:10px;cursor:pointer;width:100%;
+  margin-top:10px;transition:all .15s;
+}
+.btn-secondary:hover{border-color:var(--green);color:var(--text);}
+
+/* ══ RESULT ══ */
+#result-card{display:none;}
+
+/* Score hero */
+.score-hero{text-align:center;padding:28px 0 32px;}
+.score-label{font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:16px;}
+.score-circle{
+  width:140px;height:140px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto 16px;position:relative;
+  border:4px solid var(--bg3);
+}
+.score-number{
+  font-family:'Syne',sans-serif;font-size:52px;font-weight:800;letter-spacing:-2px;line-height:1;
+  animation:countUp .6s ease-out;
+}
+.score-max{font-size:14px;color:var(--muted);margin-top:4px;}
+.score-tag{
+  display:inline-block;padding:6px 16px;border-radius:100px;
+  font-size:12px;font-weight:600;letter-spacing:.5px;margin-bottom:10px;
+}
+.score-desc{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* Pillars */
+.pillars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px;}
+.pillar{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;padding:14px 12px;text-align:center;
+}
+.pillar-icon{font-size:20px;margin-bottom:6px;}
+.pillar-score{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:2px;
+}
+.pillar-label{font-size:10px;color:var(--muted);line-height:1.3;}
+
+/* Diagnosis sections */
+.diag-section{margin-bottom:20px;}
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  margin-bottom:14px;
+}
+.section-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.diag-box{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;padding:18px;font-size:14px;line-height:1.7;color:var(--text);
+}
+.diag-box strong{color:var(--green);}
+
+/* Action box */
+.action-box{
+  background:var(--bg3);border:1px solid var(--green-border);
+  border-radius:14px;padding:18px;margin-bottom:16px;
+}
+.action-tag{
+  display:inline-block;background:var(--green-glow);border:1px solid var(--green-border);
+  color:var(--green);font-size:10px;font-weight:600;letter-spacing:1.2px;
+  text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:10px;
+}
+.action-text{font-size:14px;line-height:1.65;color:var(--text);}
+
+/* Upsell */
+.upsell-box{
+  background:linear-gradient(135deg,rgba(34,197,94,.1) 0%,rgba(34,197,94,.03) 100%);
+  border:1px solid rgba(34,197,94,.3);border-radius:18px;padding:24px;
+}
+.upsell-box h3{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  letter-spacing:-.4px;margin-bottom:8px;line-height:1.3;
+}
+.upsell-box h3 span{color:var(--green);}
+.upsell-box p{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.feature-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.feature-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text);}
+.feature-check{
+  width:20px;height:20px;border-radius:6px;background:var(--green-glow);
+  border:1px solid var(--green-border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green);font-size:11px;flex-shrink:0;
+}
+.divider{height:1px;background:var(--border);margin:22px 0;}
+.trial-note{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;}
+
+/* Email gate */
+#email-gate{display:none;}
+.email-intro{text-align:center;font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.65;}
+.email-intro strong{color:var(--text);}
+
+/* Animations */
+.fade-in{animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes countUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+.footer{text-align:center;font-size:12px;color:var(--muted);margin-top:28px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Logo -->
+  <div class="logo">
+    <img src="data:image/png;base64,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" alt="AgendaControl">
+    <div class="logo-name">Agenda<span>Control</span></div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">100% Gratuito</div>
+    <h1>Receba o diagnóstico<br>completo do seu<br><span class="hl">Salão de Beleza</span></h1>
+    
+  </div>
+
+  <!-- ═══ INPUT CARD ═══ -->
+  <div class="card" id="inputs-card">
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+    <div class="progress-label">
+      <span id="progress-text">Etapa 1 de 3</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="steps">
+      <div class="step-dot active" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+      <div class="step-dot" id="dot3"></div>
+    </div>
+
+    <!-- ── BLOCO 1: No-Show ── -->
+    <div id="step1" class="fade-in">
+      <div class="block-title">
+        <div class="block-icon" style="background:rgba(239,68,68,.15);">📅</div>
+        No-Show & Faturamento
+      </div>
+      <div class="field">
+        <label><strong>Quantos atendimentos você faz por dia?</strong></label>
+        <div class="input-wrap">
+          <span class="input-prefix" style="left:14px;">👤</span>
+          <input type="number" id="atend_dia" placeholder="Ex: 8" min="1" max="60" style="padding-left:40px;">
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Qual o seu ticket médio?</strong></label>
+        <div class="input-wrap">
+          <span class="input-prefix">R$</span>
+          <input type="number" id="ticket" placeholder="Ex: 80" min="10">
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Quantos dias por semana você trabalha?</strong></label>
+        <div class="days-grid" id="days-grid">
+          <div class="day-btn selected" data-day="2">Seg</div>
+          <div class="day-btn selected" data-day="3">Ter</div>
+          <div class="day-btn selected" data-day="4">Qua</div>
+          <div class="day-btn selected" data-day="5">Qui</div>
+          <div class="day-btn selected" data-day="6">Sex</div>
+          <div class="day-btn" data-day="7">Sáb</div>
+          <div class="day-btn" data-day="1">Dom</div>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Qual é sua taxa de no-show?</strong></label>
+        <div class="range-container">
+          <span class="range-value" id="noshow-val">20%</span>
+          <input type="range" id="noshow" min="5" max="60" value="20" oninput="updateRange(this)">
+          <div class="range-labels"><span>5% (baixo)</span><span>60% (alto)</span></div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="goStep(2)">Continuar →</button>
+    </div>
+
+    <!-- ── BLOCO 2: Organização Financeira ── -->
+    <div id="step2" style="display:none">
+      <div class="block-title">
+        <div class="block-icon" style="background:rgba(245,158,11,.15);">💰</div>
+        Organização Financeira
+      </div>
+      <div class="field">
+        <label><strong>Você controla as entradas e saídas do seu negócio?</strong></label>
+        <div class="options-grid" id="fin1">
+          <button class="opt-btn" data-val="0" onclick="selectOpt('fin1',this)"><div class="opt-check"></div>Não controlo — é tudo na memória ou no celular</button>
+          <button class="opt-btn" data-val="1" onclick="selectOpt('fin1',this)"><div class="opt-check"></div>Anoto às vezes mas não é sistemático</button>
+          <button class="opt-btn" data-val="2" onclick="selectOpt('fin1',this)"><div class="opt-check"></div>Tenho planilha ou caderno mas é trabalhoso</button>
+          <button class="opt-btn" data-val="3" onclick="selectOpt('fin1',this)"><div class="opt-check"></div>Sim, tenho controle claro e atualizado</button>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Você sabe quanto cada profissional gerou no mês?</strong></label>
+        <div class="options-grid" id="fin2">
+          <button class="opt-btn" data-val="0" onclick="selectOpt('fin2',this)"><div class="opt-check"></div>Não tenho essa visão</button>
+          <button class="opt-btn" data-val="1" onclick="selectOpt('fin2',this)"><div class="opt-check"></div>Calculo manualmente, leva muito tempo</button>
+          <button class="opt-btn" data-val="3" onclick="selectOpt('fin2',this)"><div class="opt-check"></div>Sim, acompanho regularmente</button>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Você tem visão clara do faturamento mensal?</strong></label>
+        <div class="options-grid" id="fin3">
+          <button class="opt-btn" data-val="0" onclick="selectOpt('fin3',this)"><div class="opt-check"></div>Não sei ao certo quanto faturei esse mês</button>
+          <button class="opt-btn" data-val="1" onclick="selectOpt('fin3',this)"><div class="opt-check"></div>Tenho uma estimativa mas não o número exato</button>
+          <button class="opt-btn" data-val="3" onclick="selectOpt('fin3',this)"><div class="opt-check"></div>Sei exatamente, acompanho todo mês</button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="goStep(3)">Continuar →</button>
+      <button class="btn-secondary" onclick="goStep(1)">← Voltar</button>
+    </div>
+
+    <!-- ── BLOCO 3: Agenda Online ── -->
+    <div id="step3" style="display:none">
+      <div class="block-title">
+        <div class="block-icon" style="background:rgba(59,130,246,.15);">📱</div>
+        Agenda Online
+      </div>
+      <div class="field">
+        <label><strong>Como seus clientes agendam hoje?</strong></label>
+        <div class="options-grid" id="ag1">
+          <button class="opt-btn" data-val="0" onclick="selectOpt('ag1',this)"><div class="opt-check"></div>WhatsApp ou ligação — é tudo manual</button>
+          <button class="opt-btn" data-val="1" onclick="selectOpt('ag1',this)"><div class="opt-check"></div>Caderno ou agenda física</button>
+          <button class="opt-btn" data-val="2" onclick="selectOpt('ag1',this)"><div class="opt-check"></div>Planilha ou app simples</button>
+          <button class="opt-btn" data-val="3" onclick="selectOpt('ag1',this)"><div class="opt-check"></div>Sistema online — cliente agenda sozinho</button>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Quanto tempo por dia você gasta combinando horários?</strong></label>
+        <div class="options-grid" id="ag2">
+          <button class="opt-btn" data-val="0" onclick="selectOpt('ag2',this)"><div class="opt-check"></div>Mais de 1 hora — é uma dor constante</button>
+          <button class="opt-btn" data-val="1" onclick="selectOpt('ag2',this)"><div class="opt-check"></div>Entre 30 e 60 minutos</button>
+          <button class="opt-btn" data-val="2" onclick="selectOpt('ag2',this)"><div class="opt-check"></div>Menos de 30 minutos</button>
+          <button class="opt-btn" data-val="3" onclick="selectOpt('ag2',this)"><div class="opt-check"></div>Quase nada — cliente agenda online</button>
+        </div>
+      </div>
+      <div class="field">
+        <label><strong>Clientes já reclamaram de dificuldade para agendar?</strong></label>
+        <div class="options-grid" id="ag3">
+          <button class="opt-btn" data-val="0" onclick="selectOpt('ag3',this)"><div class="opt-check"></div>Sim, acontece com frequência</button>
+          <button class="opt-btn" data-val="1" onclick="selectOpt('ag3',this)"><div class="opt-check"></div>Raramente, mas já aconteceu</button>
+          <button class="opt-btn" data-val="3" onclick="selectOpt('ag3',this)"><div class="opt-check"></div>Nunca — processo está funcionando bem</button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="calcular()">Ver meu diagnóstico →</button>
+      <button class="btn-secondary" onclick="goStep(2)">← Voltar</button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULT CARD ═══ -->
+  <div class="card" id="result-card">
+
+    <!-- Email gate -->
+    <div id="email-gate">
+      <p class="email-intro">Seu diagnóstico está pronto.<br><strong>Descubra a saúde real do seu negócio — com um plano de ação para cada problema encontrado.</strong><br><br>Para onde enviamos o resultado?</p>
+      <div class="field">
+        <label><strong>Seu melhor e-mail</strong></label>
+        <div class="input-wrap">
+          <input type="email" id="email-input" placeholder="seuemail@gmail.com" style="padding-left:14px;font-size:15px;">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="revelarResultado()">Ver diagnóstico completo →</button>
+      
+    </div>
+
+    <!-- Resultado -->
+    <div id="resultado-completo" style="display:none">
+
+      <!-- Score hero -->
+      <div class="score-hero">
+        <div class="score-label">Saúde do seu negócio</div>
+        <div class="score-circle" id="score-circle">
+          <div class="score-number" id="score-number">0</div>
+          <div class="score-max">/100</div>
+        </div>
+        <div class="score-tag" id="score-tag"></div>
+        <p class="score-desc" id="score-desc"></p>
+      </div>
+
+      <!-- 3 Pillars -->
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon">📅</div>
+          <div class="pillar-score" id="p-noshow">0</div>
+          <div class="pillar-label">No-Show</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">💰</div>
+          <div class="pillar-score" id="p-financeiro">0</div>
+          <div class="pillar-label">Financeiro</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">📱</div>
+          <div class="pillar-score" id="p-agenda">0</div>
+          <div class="pillar-label">Agenda Online</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Diagnóstico No-Show -->
+      <div class="diag-section">
+        <div class="section-title">
+          <div class="section-icon" style="background:rgba(239,68,68,.15);">📅</div>
+          No-Show & Faturamento
+        </div>
+        <div class="diag-box" id="diag-noshow"></div>
+      </div>
+
+      <!-- Diagnóstico Financeiro -->
+      <div class="diag-section">
+        <div class="section-title">
+          <div class="section-icon" style="background:rgba(245,158,11,.15);">💰</div>
+          Organização Financeira
+        </div>
+        <div class="diag-box" id="diag-financeiro"></div>
+      </div>
+
+      <!-- Diagnóstico Agenda -->
+      <div class="diag-section">
+        <div class="section-title">
+          <div class="section-icon" style="background:rgba(59,130,246,.15);">📱</div>
+          Agenda Online
+        </div>
+        <div class="diag-box" id="diag-agenda"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Ação gratuita -->
+      <div class="section-title">
+        <div class="section-icon" style="background:var(--green-glow);">✅</div>
+        O que fazer agora — grátis
+      </div>
+      <div class="action-box">
+        <span class="action-tag">Ação imediata</span>
+        <p class="action-text" id="action-text"></p>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Upsell -->
+      <div class="upsell-box">
+        <h3>Resolva os <span id="upsell-problemas">3</span> problemas<br>identificados <span>de uma vez</span></h3>
+        <p>O AgendaControl foi feito para o seu salão. Resolve no-show, organiza o financeiro e coloca sua agenda online — tudo em um só lugar.</p>
+        <div class="feature-list">
+          <div class="feature-item"><div class="feature-check">✓</div>Confirmação automática 24h antes — zero no-show</div>
+          <div class="feature-item"><div class="feature-check">✓</div>Agenda online — cliente agenda sozinho, sem WhatsApp</div>
+          <div class="feature-item"><div class="feature-check">✓</div>Comissões e faturamento calculados automaticamente</div>
+          <div class="feature-item"><div class="feature-check">✓</div>Pacotes promocionais para fidelizar clientes</div>
+          <div class="feature-item"><div class="feature-check">✓</div>ConfirmAI — identifica quem tem chance de sumir</div>
+        </div>
+        <button class="btn-primary" onclick="window.open('#','_blank')">Testar grátis por 7 dias →</button>
+        <p class="trial-note">Sem cartão de crédito · Cancele quando quiser</p>
+      </div>
+
+      <button class="btn-secondary" style="margin-top:16px" onclick="reiniciar()">↩ Refazer diagnóstico</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Diagnóstico baseado em dados reais de salões brasileiros.<br>
+    © 2025 AgendaControl · SoluFácil Soluções Digitais LTDA
+  </div>
+</div>
+
+<script>
+// ── State ──
+let selectedDays = 5;
+let answers = {};
+
+// ── Days ──
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('selected');
+    selectedDays = document.querySelectorAll('.day-btn.selected').length;
+  });
+});
+
+// ── Range ──
+function updateRange(input) {
+  const pct = ((input.value - input.min) / (input.max - input.min)) * 100;
+  input.style.setProperty('--pct', pct + '%');
+  document.getElementById('noshow-val').textContent = input.value + '%';
+}
+updateRange(document.getElementById('noshow'));
+
+// ── Option select ──
+function selectOpt(groupId, btn) {
+  document.querySelectorAll('#' + groupId + ' .opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  btn.querySelector('.opt-check').textContent = '✓';
+  document.querySelectorAll('#' + groupId + ' .opt-btn:not(.selected) .opt-check').forEach(c => c.textContent = '');
+  answers[groupId] = parseInt(btn.dataset.val);
+}
+
+// ── Step nav ──
+function goStep(n) {
+  if (n === 2) {
+    const a = parseFloat(document.getElementById('atend_dia').value);
+    const t = parseFloat(document.getElementById('ticket').value);
+    if (!a || a < 1) { alert('Informe quantos atendimentos por dia'); return; }
+    if (!t || t < 10) { alert('Informe o ticket médio'); return; }
+  }
+  if (n === 3) {
+    if (answers.fin1 === undefined || answers.fin2 === undefined || answers.fin3 === undefined) {
+      alert('Responda todas as perguntas antes de continuar'); return;
+    }
+  }
+  ['step1','step2','step3'].forEach((id,i) => {
+    document.getElementById(id).style.display = (i+1 === n) ? '' : 'none';
+  });
+  if (n > 1) document.getElementById('step'+n).classList.add('fade-in');
+  [1,2,3].forEach(i => document.getElementById('dot'+i).classList.toggle('active', i <= n));
+  const pcts = [33, 66, 100];
+  document.getElementById('progress').style.width = pcts[n-1] + '%';
+  document.getElementById('progress-text').textContent = `Etapa ${n} de 3`;
+  document.getElementById('progress-pct').textContent = pcts[n-1] + '%';
+}
+
+// ── Calculate ──
+function calcular() {
+  if (answers.ag1 === undefined || answers.ag2 === undefined || answers.ag3 === undefined) {
+    alert('Responda todas as perguntas antes de continuar'); return;
+  }
+
+  const atend   = parseFloat(document.getElementById('atend_dia').value) || 0;
+  const ticket  = parseFloat(document.getElementById('ticket').value) || 0;
+  const ns_pct  = parseFloat(document.getElementById('noshow').value) / 100;
+  const dias    = selectedDays || 5;
+  const dias_mes = dias * 4.33;
+  const noshow_mes = Math.round(atend * dias_mes * ns_pct);
+  const perda_mes  = noshow_mes * ticket;
+
+  // Score no-show (0-100): lower rate = higher score
+  const ns_score = Math.round(Math.max(0, 100 - (ns_pct / 0.60) * 100));
+
+  // Score financeiro (0-100)
+  const fin_raw = (answers.fin1 || 0) + (answers.fin2 || 0) + (answers.fin3 || 0);
+  const fin_score = Math.round((fin_raw / 9) * 100);
+
+  // Score agenda (0-100)
+  const ag_raw = (answers.ag1 || 0) + (answers.ag2 || 0) + (answers.ag3 || 0);
+  const ag_score = Math.round((ag_raw / 9) * 100);
+
+  // Total score
+  const total = Math.round((ns_score * 0.4) + (fin_score * 0.3) + (ag_score * 0.3));
+
+  // Populate scores
+  document.getElementById('score-number').textContent = total;
+  document.getElementById('p-noshow').textContent = ns_score;
+  document.getElementById('p-financeiro').textContent = fin_score;
+  document.getElementById('p-agenda').textContent = ag_score;
+
+  // Color pillars
+  colorScore('p-noshow', ns_score);
+  colorScore('p-financeiro', fin_score);
+  colorScore('p-agenda', ag_score);
+
+  // Score tag
+  const tag = document.getElementById('score-tag');
+  const circle = document.getElementById('score-circle');
+  const num = document.getElementById('score-number');
+  if (total >= 70) {
+    tag.textContent = '✅ Negócio saudável'; tag.style.cssText = 'background:rgba(34,197,94,.15);color:#22C55E;border:1px solid rgba(34,197,94,.3);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;';
+    num.style.color = '#22C55E'; circle.style.borderColor = '#22C55E';
+    document.getElementById('score-desc').textContent = 'Seu salão está bem posicionado. Com pequenos ajustes você pode chegar ao nível máximo.';
+  } else if (total >= 40) {
+    tag.textContent = '⚠ Precisa de atenção'; tag.style.cssText = 'background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;';
+    num.style.color = '#f59e0b'; circle.style.borderColor = '#f59e0b';
+    document.getElementById('score-desc').textContent = 'Há oportunidades claras de melhoria. Cada ponto resolvido representa mais dinheiro no seu bolso.';
+  } else {
+    tag.textContent = '🚨 Situação crítica'; tag.style.cssText = 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;';
+    num.style.color = '#ef4444'; circle.style.borderColor = '#ef4444';
+    document.getElementById('score-desc').textContent = 'Seu negócio está perdendo dinheiro em múltiplas frentes. A boa notícia: tudo tem solução.';
+  }
+
+  // Diagnósticos individuais
+  document.getElementById('diag-noshow').innerHTML = buildNoShowDiag(ns_pct, perda_mes, noshow_mes);
+  document.getElementById('diag-financeiro').innerHTML = buildFinDiag(fin_score);
+  document.getElementById('diag-agenda').innerHTML = buildAgDiag(ag_score);
+
+  // Ação gratuita — prioriza o pior score
+  const worst = Math.min(ns_score, fin_score, ag_score);
+  let action = '';
+  if (worst === ns_score) {
+    action = `Mande esta mensagem hoje para os clientes de amanhã pelo WhatsApp:<br><br><em style="color:#86efac;">"Oi [Nome]! 😊 Passando para confirmar seu horário de [serviço] amanhã às [horário]. Confirma sua presença? Respondendo SIM já está confirmado!"</em>`;
+  } else if (worst === fin_score) {
+    action = `Crie uma planilha simples com 3 colunas: Data, Serviço e Valor. Anote cada atendimento hoje. Em 30 dias você vai ter a visão real do seu faturamento — e vai se surpreender com o número.`;
+  } else {
+    action = `Crie um link de agendamento no Google Agenda ou Calendly e coloque na bio do Instagram. Clientes que encontram dificuldade para agendar simplesmente vão para o concorrente.`;
+  }
+  document.getElementById('action-text').innerHTML = action;
+
+  // Count problems
+  const problems = [ns_score < 60, fin_score < 60, ag_score < 60].filter(Boolean).length;
+  document.getElementById('upsell-problemas').textContent = problems || 'os';
+
+  // Show gate
+  document.getElementById('inputs-card').style.display = 'none';
+  const rc = document.getElementById('result-card');
+  rc.style.display = 'block';
+  rc.style.visibility = 'visible';
+  rc.classList.add('fade-in');
+  document.getElementById('email-gate').style.display = 'block';
+  document.getElementById('resultado-completo').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function colorScore(id, score) {
+  const el = document.getElementById(id);
+  if (score >= 70) el.style.color = '#22C55E';
+  else if (score >= 40) el.style.color = '#f59e0b';
+  else el.style.color = '#ef4444';
+}
+
+function buildNoShowDiag(ns_pct, perda_mes, noshow_mes) {
+  if (ns_pct >= 0.30) return `Você perde <strong>R$ ${Math.round(perda_mes).toLocaleString('pt-BR')}/mês</strong> com ${noshow_mes} clientes que somem sem avisar. Taxa crítica de ${Math.round(ns_pct*100)}% — muito acima da média do setor (15%). Cada horário vazio é dinheiro que não volta.`;
+  if (ns_pct >= 0.15) return `Sua taxa de ${Math.round(ns_pct*100)}% de no-show está na média do setor, mas ainda representa <strong>R$ ${Math.round(perda_mes).toLocaleString('pt-BR')}/mês</strong> perdidos. Com confirmação automática, esse número cai para menos de 5%.`;
+  return `Sua taxa de no-show está abaixo da média — parabéns! Mas você ainda perde <strong>R$ ${Math.round(perda_mes).toLocaleString('pt-BR')}/mês</strong>. Com automação, dá para chegar perto de zero.`;
+}
+
+function buildFinDiag(score) {
+  if (score < 40) return `Você está operando <strong>sem visibilidade financeira</strong>. Sem saber quanto entra e sai, fica impossível saber se o negócio está crescendo ou perdendo dinheiro. Muitos salões faturam bem mas ficam no vermelho por falta de controle.`;
+  if (score < 70) return `Você tem algum controle mas ainda é <strong>manual e trabalhoso</strong>. O risco é deixar de registrar ou calcular errado — especialmente comissões, que são a maior fonte de conflito com profissionais.`;
+  return `Você tem boa visão financeira do negócio. O próximo passo é <strong>automatizar esse controle</strong> para não depender de planilhas manuais quando a equipe crescer.`;
+}
+
+function buildAgDiag(score) {
+  if (score < 40) return `Seus clientes ainda dependem de <strong>WhatsApp ou ligação para agendar</strong>. Isso consome horas do seu dia e afasta clientes que preferem agendar sozinhos — especialmente os mais jovens. Você está perdendo clientes sem saber.`;
+  if (score < 70) return `Você tem algum processo de agendamento, mas ainda há <strong>fricção para o cliente</strong>. Cada dificuldade no agendamento aumenta a chance de o cliente ir para o concorrente que oferece link de agendamento online.`;
+  return `Você já tem agenda online funcionando. O próximo nível é <strong>integrar agendamento, confirmação automática e lista de espera</strong> em um único sistema.`;
+}
+
+async function revelarResultado() {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email || !email.includes('@')) {
+    const input = document.getElementById('email-input');
+    input.style.borderColor = '#ef4444';
+    input.style.boxShadow = '0 0 0 3px rgba(239,68,68,.15)';
+    input.placeholder = 'Digite um e-mail válido para continuar';
+    input.focus();
+    return;
+  }
+
+  // Mostra resultado imediatamente — não bloqueia pelo Brevo
+  document.getElementById('email-gate').style.display = 'none';
+  document.getElementById('resultado-completo').style.display = '';
+  document.getElementById('resultado-completo').classList.add('fade-in');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // Cadastra via função serverless do Netlify
+  try {
+    fetch('/api/cadastrar-lead', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email,
+        scores: {
+          SCORE_SAUDE: document.getElementById('score-number').textContent,
+          SCORE_NOSHOW: document.getElementById('p-noshow').textContent,
+          SCORE_FINANCEIRO: document.getElementById('p-financeiro').textContent,
+          SCORE_AGENDA: document.getElementById('p-agenda').textContent
+        }
+      })
+    });
+  } catch(e) { console.log('Brevo:', e); }
+}
+
+function reiniciar() {
+  answers = {};
+  document.getElementById('inputs-card').style.display = '';
+  document.getElementById('result-card').style.display = 'none';
+  goStep(1);
+  [2,3].forEach(i => document.getElementById('dot'+i).classList.remove('active'));
+}
+
+function fmt(v) { return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+</script>
+</body>
+</html>
