@@ -740,6 +740,11 @@ async function revelarResultado() {
       })
     });
   } catch(e) { console.log('Brevo:', e); }
+
+  // Evento de conversão para o Meta Ads
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Lead');
+  }
 }
 
 function reiniciar() {
