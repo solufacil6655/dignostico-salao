@@ -18,11 +18,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email inválido' });
     }
 
+    const apiKey = process.env.BREVO_API_KEY;
+    
+    // Log para debug
+    console.log('API Key existe:', !!apiKey);
+    console.log('API Key início:', apiKey ? apiKey.substring(0, 10) : 'VAZIA');
+
     const response = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY
+        'api-key': apiKey
       },
       body: JSON.stringify({
         email,
@@ -33,9 +39,13 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+    console.log('Brevo status:', response.status);
+    console.log('Brevo response:', JSON.stringify(data));
+    
     return res.status(200).json({ success: true, data });
 
   } catch (error) {
+    console.log('Erro:', error.message);
     return res.status(500).json({ error: error.message });
   }
 }
